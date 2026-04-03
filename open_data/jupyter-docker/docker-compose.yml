@@ -1,0 +1,22 @@
+services:
+  jupyter:
+    build:
+      context: .
+    image: ferm-jupyter:latest
+    container_name: jupyter
+    ports:
+      - "8888:8888"
+    environment:
+      - LANG=ja_JP.UTF-8
+      - LC_ALL=ja_JP.UTF-8
+      - TZ=Asia/Tokyo
+    volumes:
+      - ../notebook:/home/jovyan/notebook
+      - ../work:/home/jovyan/work
+      - ../data:/home/jovyan/data
+      - ../.env:/home/jovyan/.env:ro
+    command: >
+      start-notebook.sh
+      --NotebookApp.token=${JUPYTER_TOKEN:-vscode-jupyter-token}
+      --NotebookApp.password=''
+      --NotebookApp.allow_origin='*'
