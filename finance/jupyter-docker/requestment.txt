@@ -1,4 +1,4 @@
-numpy
+numpy<2
 pandas>=2.2,<3
 matplotlib
 japanize-matplotlib
@@ -18,6 +18,7 @@ SPARQLWrapper
 scipy
 scikit-learn
 pandas-datareader
+getFamaFrenchFactors
 yfinance
 mplfinance
 TA-Lib
