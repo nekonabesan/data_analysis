@@ -25,16 +25,16 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 USER ${NB_UID}
 
-# Python パッケージ定義をコピーして一括インストール
-COPY requestment.txt /tmp/requestment.txt
+# コンテナ初期構築に必要な最小パッケージのみインストール
+COPY --chown=${NB_UID}:users requestment.txt /tmp/requestment.txt
+COPY --chown=${NB_UID}:users pyproject.toml /tmp/env/pyproject.toml
 
 RUN pip install --no-cache-dir -r /tmp/requestment.txt
 
-# Prophet は安定して動作した /tmp 配下の分離仮想環境へ導入する
+# Python依存は uv で管理し、Prophet 用の分離仮想環境へ同期する
 RUN python -m venv /tmp/prophet-venv && \
 	. /tmp/prophet-venv/bin/activate && \
-	pip install --no-cache-dir --upgrade pip && \
-	pip install --no-cache-dir "numpy<2" pandas matplotlib plotly python-dotenv prophet==1.1.5 ipykernel && \
+	UV_PROJECT_ENVIRONMENT=/tmp/prophet-venv uv sync --project /tmp/env --no-dev && \
 	PROPHET_STAN_DIR=$(python -c "from pathlib import Path; import prophet; print(Path(prophet.__file__).resolve().parent / \"stan_model\")") && \
 	python -m cmdstanpy.install_cmdstan --version 2.33.1 --dir "$PROPHET_STAN_DIR" --overwrite && \
 	python -m ipykernel install --user --name python3 --display-name "Python 3 (Prophet)" && \

@@ -1,9 +1,9 @@
 services:
-  jupyter:
+  stock_and_finance:
     build:
       context: .
     image: ferm-jupyter:latest
-    container_name: jupyter
+    container_name: stock_and_finance
     ports:
       - "8888:8888"
     environment:

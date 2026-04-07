@@ -1,0 +1,46 @@
+[project]
+name = "finance-notebook-env"
+version = "0.1.0"
+requires-python = ">=3.10,<3.11"
+dependencies = [
+  "numpy<2",
+  "pandas>=2.2,<3",
+  "matplotlib",
+  "japanize-matplotlib",
+  "seaborn",
+  "plotly",
+  "python-dotenv",
+  "requests",
+  "lxml",
+  "html5lib",
+  "xlrd",
+  "openpyxl",
+  "statsmodels",
+  "linearmodels",
+  "tqdm",
+  "folium",
+  "SPARQLWrapper",
+  "scipy",
+  "scikit-learn",
+  "pandas-datareader",
+  "getFamaFrenchFactors",
+  "yfinance",
+  "mplfinance",
+  "TA-Lib",
+  "pytest",
+  "PyPDF2",
+  "googletrans==3.1.0a0",
+  "pdfplumber",
+  "PuLP",
+  "option-price",
+  "prophet==1.1.5",
+  "ipykernel",
+  "nbformat>=4.2.0",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.uv]
+package = false
