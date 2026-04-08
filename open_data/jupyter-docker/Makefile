@@ -6,9 +6,12 @@ WORK_DIR := $(PROJECT_ROOT)/work
 JUPYTER_TOKEN ?= vscode-jupyter-token
 DOCKER_COMPOSE ?= docker compose
 SERVICE_NAME ?= jupyter
-IMAGE_NAME ?= ferm-jupyter:latest
+IMAGE_NAME ?= ferm-open-data-jupyter:latest
+UV_PROJECT_DIR ?= /tmp/env
+UV_ENV_PYTHON ?= /tmp/notebook-venv/bin/python
+UV_ENV_DIR ?= /tmp/notebook-venv
 
-.PHONY: start build stop logs install innstall
+.PHONY: start build stop logs sync lock install innstall
 
 # Allows: make install numpy
 ifneq ($(filter install innstall,$(MAKECMDGOALS)),)
@@ -43,6 +46,17 @@ stop:
 logs:
 	@cd "$(SCRIPT_DIR)" && $(DOCKER_COMPOSE) logs -f $(SERVICE_NAME)
 
+sync:
+	@cd "$(SCRIPT_DIR)"; \
+	if ! $(DOCKER_COMPOSE) ps --status running --services | grep -q "^$(SERVICE_NAME)$$"; then \
+		echo "Service $(SERVICE_NAME) is not running. Run 'make start' first."; \
+		exit 1; \
+	fi; \
+	$(DOCKER_COMPOSE) exec -T $(SERVICE_NAME) env UV_PROJECT_ENVIRONMENT="$(UV_ENV_DIR)" uv sync --project "$(UV_PROJECT_DIR)" --no-dev
+
+lock:
+	@cd "$(SCRIPT_DIR)" && uv lock
+
 install:
 	@module="$(or $(MODULE),$(MODULE_FROM_GOAL))"; \
 	if [ -z "$$module" ]; then \
@@ -54,6 +68,6 @@ install:
 		echo "Service $(SERVICE_NAME) is not running. Run 'make start' first."; \
 		exit 1; \
 	fi; \
-	$(DOCKER_COMPOSE) exec -T $(SERVICE_NAME) pip install --no-cache-dir "$$module"
+	$(DOCKER_COMPOSE) exec -T $(SERVICE_NAME) uv pip install --python "$(UV_ENV_PYTHON)" "$$module"
 
 innstall: install

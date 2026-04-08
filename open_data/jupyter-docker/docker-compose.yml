@@ -1,8 +1,10 @@
+name: open_data_jupyter
+
 services:
   jupyter:
     build:
       context: .
-    image: ferm-jupyter:latest
+    image: ferm-open-data-jupyter:latest
     container_name: jupyter
     ports:
       - "8888:8888"
